@@ -21,6 +21,19 @@ function generateRandomFilename(originalFilename) {
   return `${randomPart}${extension}`;
 }
 
+function validateFileUpload(data) {
+  const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
+  const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+  if (!allowedMimeTypes.includes(data.mimetype)) {
+    throw new Error("Invalid file type");
+  }
+
+  if (data.file.length > maxFileSize) {
+    throw new Error("File size exceeds limit");
+  }
+}
+
 export default async function routes(app) {
   app.register(fastifyRateLimit, {
     max: 100,
@@ -49,6 +62,7 @@ export default async function routes(app) {
   app.post("/upload", async (request, reply) => {
     try {
       const data = await request.file();
+      validateFileUpload(data);
       const fileBuffer = await data.toBuffer();
       const randomFileName = generateRandomFilename(data.filename);
       const bucketName = process.env.BUCKET_NAME;
