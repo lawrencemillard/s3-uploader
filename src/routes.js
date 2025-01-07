@@ -7,7 +7,10 @@ import { dirname } from "path";
 import s3 from "./s3Client.js";
 import db from "./database.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { generateRandomFilename, validateFileUpload } from "./utils/fileUtils.js";
+import {
+  generateRandomFilename,
+  validateFileUpload,
+} from "./utils/fileUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

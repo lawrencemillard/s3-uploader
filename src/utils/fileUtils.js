@@ -1,9 +1,10 @@
 import path from "path";
 
 export function generateRandomFilename(originalFilename) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const randomPart = Array.from({ length: 6 }, () =>
-    chars.charAt(Math.floor(Math.random() * chars.length))
+    chars.charAt(Math.floor(Math.random() * chars.length)),
   ).join("");
   const extension = path.extname(originalFilename);
   return `${randomPart}${extension}`;
