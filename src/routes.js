@@ -7,32 +7,10 @@ import { dirname } from "path";
 import s3 from "./s3Client.js";
 import db from "./database.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { generateRandomFilename, validateFileUpload } from "./utils/fileUtils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-function generateRandomFilename(originalFilename) {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const randomPart = Array.from({ length: 6 }, () =>
-    chars.charAt(Math.floor(Math.random() * chars.length)),
-  ).join("");
-  const extension = path.extname(originalFilename);
-  return `${randomPart}${extension}`;
-}
-
-function validateFileUpload(data) {
-  const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
-  const maxFileSize = 5 * 1024 * 1024; // 5MB
-
-  if (!allowedMimeTypes.includes(data.mimetype)) {
-    throw new Error("Invalid file type");
-  }
-
-  if (data.file.length > maxFileSize) {
-    throw new Error("File size exceeds limit");
-  }
-}
 
 export default async function routes(app) {
   app.register(fastifyRateLimit, {

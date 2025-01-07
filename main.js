@@ -1,12 +1,20 @@
 import fastify from "fastify";
 import dotenv from "dotenv";
 import routes from "./src/routes.js";
+import errorHandler from "./src/middleware/errorHandler.js";
+import helmet from "@fastify/helmet";
+import fastifyCsrf from "@fastify/csrf";
 
 dotenv.config();
 
 const app = fastify({ logger: true });
 
+app.register(helmet);
+app.register(fastifyCsrf);
+
 routes(app);
+
+app.setErrorHandler(errorHandler);
 
 const start = async () => {
   try {
