@@ -7,6 +7,7 @@ S3 Uploader is a Fastify-based web application that allows users to upload files
 - File uploads to S3-compatible storage
 - Rate limiting to prevent abuse
 - IP blacklisting for rate limit violators
+- API key management for upload access control
 - SQLite database for tracking uploads and blacklist entries
 - Static file serving
 
@@ -63,6 +64,19 @@ This README will assume you are using pnpm as that is my personal choice, but yo
 - `stats:total-uploads`: Get the total number of uploads
 - `stats:unique-users`: Get the number of unique users
 - `stats:blacklisted-users`: Get the number of blacklisted users
+- `api-keys:create`: Create a new API key
+- `api-keys:list`: List all API keys
+- `api-keys:update`: Update an API key by ID
+- `api-keys:delete`: Delete an API key by ID
+
+### API Key Management
+
+API keys are required to upload files. The following scripts can be used to manage API keys:
+
+- `api-keys:create`: Generates a new API key and stores it in the SQLite database.
+- `api-keys:list`: Lists all API keys stored in the database.
+- `api-keys:update <id>`: Updates an API key by its ID.
+- `api-keys:delete <id>`: Deletes an API key by its ID.
 
 ## Environment Variables
 

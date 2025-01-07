@@ -42,6 +42,19 @@ export default async function routes(app) {
 
   app.post("/upload", async (request, reply) => {
     try {
+      const apiKey = request.headers["x-api-key"];
+      if (!apiKey) {
+        return reply.status(403).send({ error: "API key required" });
+      }
+
+      const apiKeyExists = await db.get(
+        "SELECT 1 FROM api_keys WHERE api_key = ?",
+        [apiKey],
+      );
+      if (!apiKeyExists) {
+        return reply.status(403).send({ error: "Invalid API key" });
+      }
+
       const data = await request.file();
       validateFileUpload(data);
       const fileBuffer = await data.toBuffer();

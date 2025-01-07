@@ -19,6 +19,11 @@ await db.exec(`
     reason TEXT,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS api_keys (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    api_key TEXT UNIQUE,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 export default db;
