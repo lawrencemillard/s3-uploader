@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node main.js",
     "dev": "nodemon main.js",
+    "format": "prettier -w src/ main.js",
     "stats:total-uploads": "sqlite3 database.sqlite 'SELECT COUNT(*) FROM uploads;'",
     "stats:unique-users": "sqlite3 database.sqlite 'SELECT COUNT(DISTINCT ip) FROM uploads;'",
     "stats:blacklisted-users": "sqlite3 database.sqlite 'SELECT COUNT(*) FROM blacklist;'"
@@ -25,6 +26,7 @@
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2"
   }
 }
