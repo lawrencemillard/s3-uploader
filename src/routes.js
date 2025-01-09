@@ -61,6 +61,7 @@ export default async function routes(app) {
       const randomFileName = generateRandomFilename(data.filename);
       const bucketName = process.env.BUCKET_NAME;
       const s3Key = randomFileName;
+      const publicUrl = process.env.PUBLIC_URL;
 
       await s3.send(
         new PutObjectCommand({
@@ -77,7 +78,7 @@ export default async function routes(app) {
         s3Key,
       ]);
 
-      const fileUrl = `https://r2.slop.sh/${s3Key}`;
+      const fileUrl = `${publicUrl}/${s3Key}`;
       reply.send({ link: fileUrl });
     } catch (err) {
       if (

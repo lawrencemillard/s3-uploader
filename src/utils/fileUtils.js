@@ -11,10 +11,11 @@ export function generateRandomFilename(originalFilename) {
 }
 
 export function validateFileUpload(data) {
-  const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
+  const allowedMimeTypes = ["image", "video", "application"];
   const maxFileSize = 100 * 1024 * 1024;
 
-  if (!allowedMimeTypes.includes(data.mimetype)) {
+  const mimeType = data.mimetype.split("/")[0];
+  if (!allowedMimeTypes.includes(mimeType)) {
     throw new Error("Invalid file type");
   }
 
