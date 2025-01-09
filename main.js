@@ -4,6 +4,7 @@ import routes from "./src/routes.js";
 import errorHandler from "./src/middleware/errorHandler.js";
 import helmet from "@fastify/helmet";
 import fastifyCsrf from "@fastify/csrf";
+import cors from "@fastify/cors";
 
 dotenv.config();
 
@@ -11,6 +12,10 @@ const app = fastify({ logger: true });
 
 app.register(helmet);
 app.register(fastifyCsrf);
+app.register(cors, {
+  origin: "*",
+  methods: ["GET", "POST"]
+});
 
 routes(app);
 
