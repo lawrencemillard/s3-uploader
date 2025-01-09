@@ -80,8 +80,15 @@ export default async function routes(app) {
       const fileUrl = `https://r2.slop.sh/${s3Key}`;
       reply.send({ link: fileUrl });
     } catch (err) {
-      app.log.error(err);
-      reply.status(500).send({ error: err.message });
+      if (
+        err.message.includes("Invalid file type") ||
+        err.message.includes("File size exceeds limit")
+      ) {
+        reply.status(400).send({ error: err.message });
+      } else {
+        app.log.error(err);
+        reply.status(500).send({ error: "An unexpected error occurred" });
+      }
     }
   });
 }

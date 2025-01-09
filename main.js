@@ -14,7 +14,7 @@ app.register(helmet);
 app.register(fastifyCsrf);
 app.register(cors, {
   origin: "*",
-  methods: ["GET", "POST"]
+  methods: ["GET", "POST"],
 });
 
 routes(app);
