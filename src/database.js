@@ -11,6 +11,7 @@ await db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ip TEXT,
     filename TEXT,
+    delete_key TEXT UNIQUE,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
   );
   CREATE TABLE IF NOT EXISTS blacklist (

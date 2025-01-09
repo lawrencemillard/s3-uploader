@@ -6,7 +6,8 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import s3 from "./s3Client.js";
 import db from "./database.js";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import crypto from "crypto";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import {
   generateRandomFilename,
   validateFileUpload,
@@ -61,7 +62,6 @@ export default async function routes(app) {
       const randomFileName = generateRandomFilename(data.filename);
       const bucketName = process.env.BUCKET_NAME;
       const s3Key = randomFileName;
-      const publicUrl = process.env.PUBLIC_URL;
 
       await s3.send(
         new PutObjectCommand({
@@ -73,23 +73,51 @@ export default async function routes(app) {
         }),
       );
 
-      await db.run("INSERT INTO uploads (ip, filename) VALUES (?, ?)", [
-        request.ip,
-        s3Key,
-      ]);
+      const deleteKey = crypto.randomBytes(16).toString("hex");
+      const deleteUrl = `http://localhost:6969/delete?key=${deleteKey}`;
+      await db.run(
+        "INSERT INTO uploads (ip, filename, delete_key) VALUES (?, ?, ?)",
+        [request.ip, s3Key, deleteKey],
+      );
 
-      const fileUrl = `${publicUrl}/${s3Key}`;
-      reply.send({ link: fileUrl });
+      const fileUrl = `https://r2.slop.sh/${s3Key}`;
+      reply.send({ url: fileUrl, deleteUrl });
     } catch (err) {
-      if (
-        err.message.includes("Invalid file type") ||
-        err.message.includes("File size exceeds limit")
-      ) {
-        reply.status(400).send({ error: err.message });
-      } else {
-        app.log.error(err);
-        reply.status(500).send({ error: "An unexpected error occurred" });
+      app.log.error(err);
+      reply.status(500).send({ error: err.message });
+    }
+  });
+
+  app.get("/delete", async (request, reply) => {
+    try {
+      const deleteKey = request.query.key;
+      if (!deleteKey) {
+        return reply.status(400).send({ error: "Delete key required" });
       }
+
+      const upload = await db.get(
+        "SELECT filename FROM uploads WHERE delete_key = ?",
+        [deleteKey],
+      );
+      if (!upload) {
+        return reply.status(404).send({ error: "Invalid delete key" });
+      }
+
+      const bucketName = process.env.BUCKET_NAME;
+      const s3Key = upload.filename;
+
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: bucketName,
+          Key: s3Key,
+        }),
+      );
+
+      await db.run("DELETE FROM uploads WHERE delete_key = ?", [deleteKey]);
+      reply.send({ success: true, message: "File deleted successfully" });
+    } catch (err) {
+      app.log.error(err);
+      reply.status(500).send({ error: err.message });
     }
   });
 }
