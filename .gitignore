@@ -3,3 +3,6 @@ node_modules
 database.sqlite
 pnpm-lock.yaml
 ecosystem.config.json
+logs
+src/static
+pnpm-workspace.yaml

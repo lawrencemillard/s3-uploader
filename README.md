@@ -88,6 +88,96 @@ The following environment variables are required for the application to run:
 - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key
 - `BUCKET_NAME`: The name of your S3 bucket
 
+## API Documentation
+
+### Upload a File
+Upload a file to the S3-compatible storage.
+
+```bash
+curl -X POST http://localhost:6969/upload \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -F "file=@/path/to/your/file.jpg"
+```
+
+Response:
+```json
+{
+  "success": true,
+  "url": "http://your-s3-endpoint/bucket-name/randomfilename.jpg"
+}
+```
+
+### Check Upload Status
+Get the status of a previous upload using the file ID.
+
+```bash
+curl -X GET http://localhost:6969/status/:fileId \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### List Recent Uploads
+Get a list of recent uploads (requires admin API key).
+
+```bash
+curl -X GET http://localhost:6969/uploads \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY"
+```
+
+### API Key Management Examples
+
+Create a new API key:
+```bash
+curl -X POST http://localhost:6969/api-keys \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test Key", "isAdmin": false}'
+```
+
+List all API keys:
+```bash
+curl -X GET http://localhost:6969/api-keys \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY"
+```
+
+Update an API key:
+```bash
+curl -X PUT http://localhost:6969/api-keys/:id \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Updated Key Name", "isActive": true}'
+```
+
+Delete an API key:
+```bash
+curl -X DELETE http://localhost:6969/api-keys/:id \
+  -H "Authorization: Bearer YOUR_ADMIN_API_KEY"
+```
+
+## Error Handling
+
+The API returns standard HTTP status codes:
+
+- 200: Success
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 429: Too Many Requests
+- 500: Internal Server Error
+
+Error response format:
+```json
+{
+  "error": true,
+  "message": "Error description"
+}
+```
+
+## Rate Limiting
+
+- Default: 100 requests per minute per IP
+- Exceeded limits result in temporary IP blacklisting
+- Blacklist duration: 24 hours
+
 ## License
 
 This project is licensed under the GPL License.

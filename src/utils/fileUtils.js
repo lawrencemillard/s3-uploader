@@ -1,4 +1,5 @@
 import path from "path";
+import config from "../config.js";
 
 export function generateRandomFilename(originalFilename) {
   const chars =
@@ -11,8 +12,7 @@ export function generateRandomFilename(originalFilename) {
 }
 
 export function validateFileUpload(data) {
-  const allowedMimeTypes = ["image", "video", "application"];
-  const maxFileSize = 100 * 1024 * 1024;
+  const { allowedMimeTypes, maxFileSize } = config.upload;
 
   const mimeType = data.mimetype.split("/")[0];
   if (!allowedMimeTypes.includes(mimeType)) {
